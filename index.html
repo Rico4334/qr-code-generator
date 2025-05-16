@@ -12,10 +12,23 @@
       text-align: center;
     }
 
-    textarea, input[type="color"] {
+    .top-controls {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 14px;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    textarea {
       width: 90%;
       padding: 10px;
       font-size: 16px;
+      margin-top: 50px;
       margin-bottom: 1rem;
     }
 
@@ -52,17 +65,29 @@
       textarea {
         height: 150px;
       }
+
+      .top-controls {
+        font-size: 12px;
+        padding: 5px 8px;
+      }
+
+      .top-controls label {
+        display: block;
+        margin-bottom: 4px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="top-controls">
+    <label for="colorPicker">QR Color</label>
+    <input type="color" id="colorPicker" value="#000000" style="width: 40px; height: 25px; padding: 0; border: none;" />
+  </div>
+
   <h1>Advanced QR Code Generator</h1>
   <p>Enter up to 20 lines of text. Each line gets its own QR code.</p>
 
   <textarea id="inputData" placeholder="One item per line..."></textarea><br />
-  <label for="colorPicker">QR Color: </label>
-  <input type="color" id="colorPicker" value="#000000"><br />
-
   <button onclick="generateQRCodes()">Generate</button>
   <button onclick="downloadAll()">Download All as ZIP</button>
 
@@ -144,3 +169,4 @@
   </script>
 </body>
 </html>
+
