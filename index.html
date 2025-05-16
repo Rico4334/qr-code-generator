@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Multi QR Code Generator</title>
+  <title>Advanced QR Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,18 +12,18 @@
       text-align: center;
     }
 
-    textarea {
+    textarea, input[type="color"] {
       width: 90%;
-      height: 200px;
-      margin-bottom: 1rem;
       padding: 10px;
       font-size: 16px;
+      margin-bottom: 1rem;
     }
 
     button {
       padding: 10px 20px;
       font-size: 16px;
-      margin-bottom: 2rem;
+      margin: 5px;
+      cursor: pointer;
     }
 
     .qr-container {
@@ -38,56 +38,108 @@
       border: 1px solid #ccc;
       padding: 10px;
       border-radius: 8px;
+      text-align: center;
     }
 
     .qr-block p {
       word-wrap: break-word;
       max-width: 200px;
       font-size: 12px;
+      margin: 10px 0;
+    }
+
+    @media (max-width: 600px) {
+      textarea {
+        height: 150px;
+      }
     }
   </style>
 </head>
 <body>
-  <h1>Multi QR Code Generator</h1>
-  <p>Enter up to 20 lines of text. Each line will generate its own QR code.</p>
+  <h1>Advanced QR Code Generator</h1>
+  <p>Enter up to 20 lines of text. Each line gets its own QR code.</p>
 
-  <textarea id="inputData" placeholder="Enter one item per line (max 20)..."></textarea><br />
-  <button onclick="generateQRCodes()">Generate QR Codes</button>
+  <textarea id="inputData" placeholder="One item per line..."></textarea><br />
+  <label for="colorPicker">QR Color: </label>
+  <input type="color" id="colorPicker" value="#000000"><br />
+
+  <button onclick="generateQRCodes()">Generate</button>
+  <button onclick="downloadAll()">Download All as ZIP</button>
 
   <div id="qrCodes" class="qr-container"></div>
 
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.0/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
   <script>
-    function generateQRCodes() {
+    async function generateQRCodes() {
       const input = document.getElementById("inputData").value.trim();
       const lines = input.split("\n").filter(line => line.trim() !== "").slice(0, 20);
+      const color = document.getElementById("colorPicker").value;
       const qrContainer = document.getElementById("qrCodes");
 
-      qrContainer.innerHTML = ""; // Clear previous codes
+      qrContainer.innerHTML = ""; // Clear old
 
       if (lines.length === 0) {
-        alert("Please enter at least one line of text.");
+        alert("Please enter at least one line.");
         return;
       }
 
-      lines.forEach((line, index) => {
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
         const qrBlock = document.createElement("div");
         qrBlock.className = "qr-block";
 
         const canvas = document.createElement("canvas");
+        canvas.id = `qrCanvas${i}`;
+
         const label = document.createElement("p");
         label.textContent = line;
 
+        const downloadBtn = document.createElement("button");
+        downloadBtn.textContent = "Download PNG";
+        downloadBtn.onclick = () => downloadPNG(canvas, `qr_${i + 1}.png`);
+
         qrBlock.appendChild(canvas);
         qrBlock.appendChild(label);
+        qrBlock.appendChild(downloadBtn);
         qrContainer.appendChild(qrBlock);
 
-        QRCode.toCanvas(canvas, line, {
-          width: 150
-        }, function (error) {
-          if (error) console.error(error);
+        await QRCode.toCanvas(canvas, line, {
+          width: 150,
+          color: {
+            dark: color,
+            light: "#ffffff"
+          }
         });
-      });
+      }
+    }
+
+    function downloadPNG(canvas, filename) {
+      const link = document.createElement("a");
+      link.href = canvas.toDataURL("image/png");
+      link.download = filename;
+      link.click();
+    }
+
+    async function downloadAll() {
+      const canvases = document.querySelectorAll("canvas");
+      if (canvases.length === 0) {
+        alert("No QR codes to download. Please generate first.");
+        return;
+      }
+
+      const zip = new JSZip();
+      for (let i = 0; i < canvases.length; i++) {
+        const canvas = canvases[i];
+        const dataURL = canvas.toDataURL("image/png");
+        const base64 = dataURL.split(',')[1];
+        zip.file(`qr_${i + 1}.png`, base64, { base64: true });
+      }
+
+      const blob = await zip.generateAsync({ type: "blob" });
+      saveAs(blob, "qr-codes.zip");
     }
   </script>
 </body>
