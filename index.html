@@ -2,46 +2,92 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>QR Code Generator</title>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Multi QR Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
+      margin: 2rem;
+      background: #f5f5f5;
       text-align: center;
-      margin-top: 50px;
     }
-    input[type="text"] {
+
+    textarea {
+      width: 90%;
+      height: 200px;
+      margin-bottom: 1rem;
       padding: 10px;
-      width: 300px;
+      font-size: 16px;
     }
+
     button {
       padding: 10px 20px;
-      margin-left: 10px;
+      font-size: 16px;
+      margin-bottom: 2rem;
     }
-    #qrcode {
-      margin-top: 20px;
+
+    .qr-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .qr-block {
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 8px;
+    }
+
+    .qr-block p {
+      word-wrap: break-word;
+      max-width: 200px;
+      font-size: 12px;
     }
   </style>
 </head>
 <body>
-  <h1>QR Code Generator</h1>
-  <input type="text" id="text" placeholder="Enter text or URL" />
-  <button onclick="generateQRCode()">Generate QR Code</button>
-  <div id="qrcode"></div>
+  <h1>Multi QR Code Generator</h1>
+  <p>Enter up to 20 lines of text. Each line will generate its own QR code.</p>
 
+  <textarea id="inputData" placeholder="Enter one item per line (max 20)..."></textarea><br />
+  <button onclick="generateQRCodes()">Generate QR Codes</button>
+
+  <div id="qrCodes" class="qr-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
   <script>
-    function generateQRCode() {
-      const text = document.getElementById("text").value;
-      const qrContainer = document.getElementById("qrcode");
-      qrContainer.innerHTML = "";
-      if (text.trim() !== "") {
-        new QRCode(qrContainer, {
-          text: text,
-          width: 256,
-          height: 256,
-        });
+    function generateQRCodes() {
+      const input = document.getElementById("inputData").value.trim();
+      const lines = input.split("\n").filter(line => line.trim() !== "").slice(0, 20);
+      const qrContainer = document.getElementById("qrCodes");
+
+      qrContainer.innerHTML = ""; // Clear previous codes
+
+      if (lines.length === 0) {
+        alert("Please enter at least one line of text.");
+        return;
       }
+
+      lines.forEach((line, index) => {
+        const qrBlock = document.createElement("div");
+        qrBlock.className = "qr-block";
+
+        const canvas = document.createElement("canvas");
+        const label = document.createElement("p");
+        label.textContent = line;
+
+        qrBlock.appendChild(canvas);
+        qrBlock.appendChild(label);
+        qrContainer.appendChild(qrBlock);
+
+        QRCode.toCanvas(canvas, line, {
+          width: 150
+        }, function (error) {
+          if (error) console.error(error);
+        });
+      });
     }
   </script>
 </body>
