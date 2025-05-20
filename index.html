@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Advanced QR Code Generator</title>
+  <title>QR Code Generator</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -26,6 +26,7 @@
 
     textarea {
       width: 90%;
+      height: 200px;
       padding: 10px;
       font-size: 16px;
       margin-top: 50px;
@@ -84,10 +85,10 @@
     <input type="color" id="colorPicker" value="#000000" style="width: 40px; height: 25px; padding: 0; border: none;" />
   </div>
 
-  <h1>Advanced QR Code Generator</h1>
-  <p>Enter up to 20 lines of text. Each line gets its own QR code.</p>
+  <h1>QR Code Generator</h1>
+  <p>Enter up to <strong>50 lines</strong> of text. Each line creates a QR code.</p>
 
-  <textarea id="inputData" placeholder="One item per line..."></textarea><br />
+  <textarea id="inputData" placeholder="One item per line... max 50 lines"></textarea><br />
   <button onclick="generateQRCodes()">Generate</button>
   <button onclick="downloadAll()">Download All as ZIP</button>
 
@@ -100,11 +101,11 @@
   <script>
     async function generateQRCodes() {
       const input = document.getElementById("inputData").value.trim();
-      const lines = input.split("\n").filter(line => line.trim() !== "").slice(0, 20);
+      const lines = input.split("\n").filter(line => line.trim() !== "").slice(0, 50);
       const color = document.getElementById("colorPicker").value;
       const qrContainer = document.getElementById("qrCodes");
 
-      qrContainer.innerHTML = ""; // Clear old
+      qrContainer.innerHTML = "";
 
       if (lines.length === 0) {
         alert("Please enter at least one line.");
@@ -168,5 +169,7 @@
     }
   </script>
 </body>
+</html>
+
 </html>
 
