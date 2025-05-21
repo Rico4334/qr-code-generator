@@ -96,7 +96,7 @@
 <body>
   <div class="top-controls">
     <label for="colorPicker">QR Color</label>
-    <input type="color" id="colorPicker" value="#ffffff" style="width: 40px; height: 25px; padding: 0; border: none;" />
+    <input type="color" id="colorPicker" style="width: 40px; height: 25px; padding: 0; border: none;" />
   </div>
 
   <h1>QR Code Generator</h1>
@@ -113,6 +113,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
   <script>
+    // Load saved color on page load
+    window.onload = () => {
+      const savedColor = localStorage.getItem("qrColor") || "#ffffff";
+      document.getElementById("colorPicker").value = savedColor;
+    };
+
+    // Save color when changed
+    document.getElementById("colorPicker").addEventListener("input", (e) => {
+      localStorage.setItem("qrColor", e.target.value);
+    });
+
     async function generateQRCodes() {
       const input = document.getElementById("inputData").value.trim();
       const lines = input.split("\n").filter(line => line.trim() !== "").slice(0, 50);
