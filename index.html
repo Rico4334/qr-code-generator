@@ -20,13 +20,17 @@
       font-size: 14px;
       background: #1f1f1f;
       border: 1px solid #333;
-      padding: 8px 10px;
+      padding: 10px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
     }
 
-    .top-controls label, .top-controls select {
-      margin-right: 10px;
+    .top-controls label {
+      margin-right: 4px;
     }
 
     textarea {
@@ -34,7 +38,7 @@
       height: 200px;
       padding: 10px;
       font-size: 16px;
-      margin-top: 60px;
+      margin-top: 90px;
       margin-bottom: 1rem;
       background: #1e1e1e;
       color: #ffffff;
@@ -80,10 +84,20 @@
       color: #ccc;
     }
 
+    select, input[type="color"] {
+      background: #2a2a2a;
+      color: white;
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 2px 4px;
+    }
+
     @media (max-width: 600px) {
       .top-controls {
         font-size: 12px;
-        padding: 5px 8px;
+        padding: 5px;
+        flex-direction: column;
+        align-items: flex-start;
       }
     }
   </style>
@@ -97,7 +111,28 @@
     </select>
 
     <label for="colorPicker">Color:</label>
-    <input type="color" id="colorPicker" style="width: 40px; height: 25px; padding: 0; border: none;" />
+    <input type="color" id="colorPicker" />
+
+    <label for="fontSize">Font:</label>
+    <select id="fontSize">
+      <option value="8">8px</option>
+      <option value="10">10px</option>
+      <option value="12" selected>12px</option>
+      <option value="14">14px</option>
+      <option value="16">16px</option>
+      <option value="18">18px</option>
+      <option value="20">20px</option>
+      <option value="24">24px</option>
+    </select>
+
+    <label for="barcodeHeight">Height:</label>
+    <select id="barcodeHeight">
+      <option value="40">40px</option>
+      <option value="60" selected>60px</option>
+      <option value="80">80px</option>
+      <option value="100">100px</option>
+      <option value="120">120px</option>
+    </select>
   </div>
 
   <h1>Code Generator</h1>
@@ -129,6 +164,8 @@
       const lines = input.split("\n").filter(line => line.trim() !== "").slice(0, 50);
       const color = document.getElementById("colorPicker").value;
       const type = document.getElementById("codeType").value;
+      const fontSize = parseInt(document.getElementById("fontSize").value);
+      const height = parseInt(document.getElementById("barcodeHeight").value);
       const container = document.getElementById("qrCodes");
 
       container.innerHTML = "";
@@ -168,8 +205,8 @@
             lineColor: color,
             background: "#ffffff",
             width: 2,
-            height: 60,
-            fontSize: 14,
+            height: height,
+            fontSize: fontSize,
             margin: 5
           });
         }
@@ -204,6 +241,3 @@
   </script>
 </body>
 </html>
-
-</html>
-
