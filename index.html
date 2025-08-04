@@ -153,11 +153,20 @@
     window.onload = () => {
       const savedColor = localStorage.getItem("qrColor") || "#ffffff";
       document.getElementById("colorPicker").value = savedColor;
+      attachLiveUpdateListeners();
     };
 
     document.getElementById("colorPicker").addEventListener("input", (e) => {
       localStorage.setItem("qrColor", e.target.value);
+      generateCodes(); // live update
     });
+
+    function attachLiveUpdateListeners() {
+      const ids = ["codeType", "fontSize", "barcodeHeight"];
+      ids.forEach(id => {
+        document.getElementById(id).addEventListener("change", generateCodes);
+      });
+    }
 
     async function generateCodes() {
       const input = document.getElementById("inputData").value.trim();
@@ -170,10 +179,7 @@
 
       container.innerHTML = "";
 
-      if (lines.length === 0) {
-        alert("Please enter at least one line.");
-        return;
-      }
+      if (lines.length === 0) return;
 
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
